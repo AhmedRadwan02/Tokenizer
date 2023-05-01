@@ -127,7 +127,7 @@ public class Tokenizor {
 	// switch cases
 
 	public void switches() {
-
+		//System.out.println("curr state : "+state+"	curr head"+lookahead);
 		switch (state) {
 		case 0:
 			if (lookahead.matches("\\+")) {
@@ -184,11 +184,10 @@ public class Tokenizor {
 				state = 73;
 			} else if (lookahead.matches("[a-zA-Z_$]*")) {
 				state = 67;
-			} else if (lookahead.matches("\\t|\\n|\\r")) {
-				state = 0;
-			} else if (lookahead.matches(" ")) {
-				state = 0;
-			} else {
+			}if (lookahead.matches("\\s")) {
+			    state = 0;
+			}
+			else {
 			}
 
 			if (state != 0)
