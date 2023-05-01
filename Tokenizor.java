@@ -21,7 +21,6 @@ public class Tokenizor {
 
 	//
 	static ArrayList<String> Current_Token = new ArrayList<String>();
-
 	static {
 		TOKENS_NAMES = new HashMap<>();
 		TOKENS_NAMES.put(2, "Increment");
@@ -67,6 +66,7 @@ public class Tokenizor {
 		TOKENS_NAMES.put(58, "Right_SQ_Bracket");
 		TOKENS_NAMES.put(59, "Left_SQ_Bracket");
 		TOKENS_NAMES.put(62, "single_quote");
+		TOKENS_NAMES.put(63, "Character");
 		TOKENS_NAMES.put(65, "double_quote");
 		TOKENS_NAMES.put(66, "String");
 		TOKENS_NAMES.put(68, "Identifier");
@@ -107,12 +107,15 @@ public class Tokenizor {
 	public void Print() {
 		if (!Current_Token.isEmpty() && state != 0) {
 			for (int i = 0; i < Current_Token.size(); i++) {
-				System.out.print(Current_Token.get(i));
+				if (!Current_Token.get(i).matches("\r"))
+					System.out.printf("%s", Current_Token.get(i));
 			}
-			System.out.println("\t" + TOKENS_NAMES.get(state));
+			System.out.printf("\t");
+
+			System.out.printf("\t%25s%n", TOKENS_NAMES.get(state));
+
 		}
 		Current_Token.clear();
-
 	}
 
 	// Ungetc function
@@ -175,33 +178,33 @@ public class Tokenizor {
 				state = 0;
 			} else if (lookahead.matches("/")) {
 				state = 51;
-			} else if (lookahead.matches(".")) {
-				state = 73;
 			} else if (lookahead.matches("\\d")) {
 				state = 69;
+			} else if (lookahead.matches(".")) {
+				state = 73;
 			} else if (lookahead.matches("[a-zA-Z_$]*")) {
 				state = 67;
 			} else if (lookahead.matches("\\t|\\n|\\r")) {
 				state = 0;
-			}else if(lookahead.matches(" ")){
+			} else if (lookahead.matches(" ")) {
 				state = 0;
-			}else {
+			} else {
 			}
-            
-			if(state != 0)
+
+			if (state != 0)
 				Current_Token.add(lookahead);
-	        readChar();
+			readChar();
 			break;
 		case 1:
-			if(lookahead.matches("\\+")) {
-				state =2 ;
+			if (lookahead.matches("\\+")) {
+				state = 2;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else if(lookahead.matches("=")) {
+				readChar();
+			} else if (lookahead.matches("=")) {
 				state = 3;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
+				readChar();
+			} else {
 				state = 4;
 			}
 			break;
@@ -215,41 +218,41 @@ public class Tokenizor {
 			break;
 		case 4:
 			UngetC();
-			Print();	
+			Print();
 			state = 0;
 			break;
 		case 5:
-			if(lookahead.matches("-")) {
-				state =6;
+			if (lookahead.matches("-")) {
+				state = 6;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else if(lookahead.matches("=")) {
+				readChar();
+			} else if (lookahead.matches("=")) {
 				state = 7;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
+				readChar();
+			} else {
 				state = 8;
 			}
 			break;
 		case 6:
 			Print();
 			state = 0;
-	        break;
+			break;
 		case 7:
 			Print();
 			state = 0;
-	        break;
+			break;
 		case 8:
 			UngetC();
 			Print();
 			state = 0;
 			break;
 		case 9:
-			if(lookahead.matches("=")) {
+			if (lookahead.matches("=")) {
 				state = 10;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
+				readChar();
+			} else {
 				state = 11;
 			}
 			break;
@@ -263,11 +266,11 @@ public class Tokenizor {
 			state = 0;
 			break;
 		case 12:
-			if(lookahead.matches("=")) {
-				state =13;
+			if (lookahead.matches("=")) {
+				state = 13;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
+				readChar();
+			} else {
 				state = 14;
 			}
 			break;
@@ -280,11 +283,11 @@ public class Tokenizor {
 			state = 0;
 			break;
 		case 15:
-			if(lookahead.matches("=")) {
-				state =16;
+			if (lookahead.matches("=")) {
+				state = 16;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
+				readChar();
+			} else {
 				state = 17;
 			}
 			break;
@@ -298,32 +301,32 @@ public class Tokenizor {
 			state = 0;
 			break;
 		case 18:
-			if(lookahead.matches("=")) {
+			if (lookahead.matches("=")) {
 				state = 19;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else if (lookahead.matches(">")){
+				readChar();
+			} else if (lookahead.matches(">")) {
 				state = 20;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
-				state =21;
+				readChar();
+			} else {
+				state = 21;
 			}
 			break;
 		case 19:
 			Print();
 			state = 0;
 		case 20:
-			if(lookahead.matches(">")) {
+			if (lookahead.matches(">")) {
 				state = 22;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else if (lookahead.matches("=")){
+				readChar();
+			} else if (lookahead.matches("=")) {
 				state = 23;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
-				state =24;
+				readChar();
+			} else {
+				state = 24;
 			}
 			break;
 		case 21:
@@ -345,28 +348,28 @@ public class Tokenizor {
 			state = 0;
 			break;
 		case 25:
-			if(lookahead.matches("=")) {
+			if (lookahead.matches("=")) {
 				state = 26;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else if (lookahead.matches("<")){
+				readChar();
+			} else if (lookahead.matches("<")) {
 				state = 27;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
-				state =28;
+				readChar();
+			} else {
+				state = 28;
 			}
 			break;
 		case 26:
 			Print();
 			state = 0;
 		case 27:
-			if(lookahead.matches("=")) {
+			if (lookahead.matches("=")) {
 				state = 29;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
-				state =30;
+				readChar();
+			} else {
+				state = 30;
 			}
 			break;
 		case 28:
@@ -383,16 +386,16 @@ public class Tokenizor {
 			state = 0;
 			break;
 		case 31:
-			if(lookahead.matches("=")) {
+			if (lookahead.matches("=")) {
 				state = 34;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else if (lookahead.matches("&")){
+				readChar();
+			} else if (lookahead.matches("&")) {
 				state = 33;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
-				state =32;
+				readChar();
+			} else {
+				state = 32;
 			}
 			break;
 		case 32:
@@ -409,16 +412,16 @@ public class Tokenizor {
 			state = 0;
 			break;
 		case 35:
-			if(lookahead.matches("=")) {
+			if (lookahead.matches("=")) {
 				state = 38;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else if (lookahead.matches("|")){
+				readChar();
+			} else if (lookahead.matches("|")) {
 				state = 37;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
-				state =36;
+				readChar();
+			} else {
+				state = 36;
 			}
 			break;
 		case 36:
@@ -435,12 +438,12 @@ public class Tokenizor {
 			state = 0;
 			break;
 		case 39:
-			if(lookahead.matches("=")) {
+			if (lookahead.matches("=")) {
 				state = 41;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
-				state =40;
+				readChar();
+			} else {
+				state = 40;
 			}
 			break;
 		case 41:
@@ -453,12 +456,12 @@ public class Tokenizor {
 			state = 0;
 			break;
 		case 42:
-			if(lookahead.matches("=")) {
+			if (lookahead.matches("=")) {
 				state = 44;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else {
-				state =43;
+				readChar();
+			} else {
+				state = 43;
 			}
 			break;
 		case 43:
@@ -483,18 +486,18 @@ public class Tokenizor {
 			state = 0;
 			break;
 		case 64:
-			if (lookahead.matches("\"")) {
+			if (lookahead.matches("\n|\t|\b|\f|\r|\\|\"")) {
 				state = 66;
 				Current_Token.add(lookahead);
-		        readChar();
-			}else if(lookahead.matches("\\S+")){
-				state =64;
-				Current_Token.add(lookahead);
-		        readChar();
-			}else {
+				readChar();
+			} else if (lookahead.matches("\n")) {
+				state = 65;
+			} else {
 				state = 64;
+				Current_Token.add(lookahead);
 				readChar();
 			}
+			break;
 		case 65:
 			UngetC();
 			Print();
@@ -503,9 +506,94 @@ public class Tokenizor {
 		case 66:
 			Print();
 			state = 0;
-			break;	
-		}
+			break;
+		case 69:
+			if (lookahead.matches("\\d")) {
+				state = 69;
+				Current_Token.add(lookahead);
+				readChar();
+			} else if (lookahead.matches(".")) {
+				state = 71;
+				Current_Token.add(lookahead);
+				readChar();
+			} else {
+				state = 70;
+				Current_Token.add(lookahead);
+				readChar();
+			}
+			break;
+		case 70:
+			UngetC();
+			Print();
+			state = 0;
+			break;
+		case 71:
+			if (lookahead.matches("\\d")) {
+				state = 71;
+				Current_Token.add(lookahead);
+				readChar();
+			}
 
+			else {
+				Current_Token.add(lookahead);
+				state = 72;
+			}
+			break;
+		case 72:
+			UngetC();
+			Print();
+			state = 0;
+			break;
+		case 73:
+			if (lookahead.matches("\\d")) {
+				state = 71;
+				Current_Token.add(lookahead);
+				readChar();
+			} else {
+				state = 74;
+				Current_Token.add(lookahead);
+				readChar();
+			}
+			break;
+		case 74:
+			UngetC();
+			Print();
+			state = 0;
+			break;
+		case 60:
+			if (lookahead.matches("\n") || lookahead.matches("\r")) {
+				state = 62;
+			} else {
+				state = 61;
+				Current_Token.add(lookahead);
+				readChar();
+			}
+			break;
+		case 61:
+			if(lookahead.matches("[ntbfr\\\\]")) {
+				state = 61;
+				Current_Token.add(lookahead);
+				readChar();
+			}
+			else if (lookahead.matches("'")) {
+				state = 63;
+				Current_Token.add(lookahead);
+				readChar();
+			} else {
+				state = 62;
+			}
+			break;
+		case 62:
+			UngetC();
+			Print();
+			state = 0;
+			break;
+		case 63:
+			Print();
+			state = 0;
+			break;
+
+		}
 	}
 
 	// read character
