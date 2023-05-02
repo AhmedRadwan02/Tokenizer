@@ -1,1 +1,1 @@
-# Tokenizor.
+# Tokenizer.
