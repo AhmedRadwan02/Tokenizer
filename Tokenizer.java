@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.spi.CurrencyNameProvider;
 
-public class Tokenizor {
+public class Tokenizer {
 	Scanner scanner;
 	// current character we want to match
 	String lookahead;
@@ -78,7 +78,7 @@ public class Tokenizor {
 	int state = 0;
 
 	// constructor
-	public Tokenizor(String path) {
+	public Tokenizer(String path) {
 		try {
 			scanner = new Scanner(new File(path));
 			// read character by character
