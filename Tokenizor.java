@@ -59,7 +59,7 @@ public class Tokenizor {
 		TOKENS_NAMES.put(49, "Div_Assign");
 		TOKENS_NAMES.put(52, "Comma");
 		TOKENS_NAMES.put(53, "Semicolon");
-		TOKENS_NAMES.put(54, "Period");
+		TOKENS_NAMES.put(54, "Left_Curly");
 		TOKENS_NAMES.put(55, "Right_Curly");
 		TOKENS_NAMES.put(56, "Right_Paranthese");
 		TOKENS_NAMES.put(57, "Left_Paranthese");
@@ -94,25 +94,33 @@ public class Tokenizor {
 
 	// read file
 	public void readTokens() {
+		printHeader();
 		readChar();
 		while (scanner.hasNext()) {
 			switches();
 		}
-		while (!Current_Token.isEmpty()) {
+		while (!Current_Token.isEmpty() || !lookahead.matches("\0")) {
 			switches();
 		}
 	}
+	// header
+	public void printHeader() {
+		System.out.println("--------------------------------------------------------------");
+		System.out.printf("\t%-32s%s%n","Lexemes","Tokens");
+		System.out.println("--------------------------------------------------------------\n");
 
+	}
 	// Print
 	public void Print() {
+		StringBuilder tokens =new StringBuilder();
 		if (!Current_Token.isEmpty() && state != 0) {
 			for (int i = 0; i < Current_Token.size(); i++) {
 				if (!Current_Token.get(i).matches("\r"))
-					System.out.printf("%s", Current_Token.get(i));
+					tokens.append(Current_Token.get(i));
 			}
-			System.out.printf("\t");
+			System.out.printf("\t%-30s", tokens);
 
-			System.out.printf("\t%25s%n", TOKENS_NAMES.get(state));
+			System.out.printf("\t%s%n", TOKENS_NAMES.get(state));
 
 		}
 		Current_Token.clear();
@@ -127,7 +135,6 @@ public class Tokenizor {
 	// switch cases
 
 	public void switches() {
-		// System.out.println("curr state : "+state+" curr head"+lookahead);
 		switch (state) {
 		case 0:
 			if (lookahead.matches("\\+")) {
@@ -177,17 +184,17 @@ public class Tokenizor {
 			} else if (lookahead.matches("\n")) {
 				state = 0;
 			} else if (lookahead.matches("/")) {
-				state = 51;
+				state = 46;
 			} else if (lookahead.matches("\\d")) {
 				state = 69;
 			} else if (lookahead.matches("\\.")) {
 				state = 73;
 			} else if (lookahead.matches("[a-zA-Z_$]*")) {
 				state = 67;
+			}else {
 			}
 			if (lookahead.matches("\\s")) {
 				state = 0;
-			} else {
 			}
 
 			if (state != 0)
@@ -472,83 +479,6 @@ public class Tokenizor {
 			Print();
 			state = 0;
 			break;
-
-//                // new code
-//            case 46:
-//                if(lookahead.matches("\n")) {
-//                    state = 0;
-//                    //  Current_Token.add(lookahead);
-//                    // readChar();
-//                    Current_Token.clear();
-//                }
-//                else{
-//                    state = 46;
-//                    Current_Token.add(lookahead);
-//                    readChar();
-//                }
-//                break;
-//            case 47:
-//                if(lookahead.matches("=")) {
-//                    state = 49;
-//                    Current_Token.add(lookahead);
-//                    readChar();
-//                }
-//                else if(lookahead.matches("\\*")) {
-//                    state = 50;
-//                    Current_Token.add(lookahead);
-//                    readChar();
-//                }
-//                else if(lookahead.matches("/")) {
-//                    state = 46;
-//                    Current_Token.add(lookahead);
-//                    readChar();
-//                }
-//                else {
-//                    state = 48;
-//                    Current_Token.add(lookahead);
-//                    readChar();
-//                }
-//                break;
-//            case 48: {
-//                UngetC();
-//                Print();
-//                state = 0;
-//            }break;
-//            case 49: {
-//                UngetC();
-//                Print();
-//                state = 0;
-//            } break;
-//            case 50:
-//                if(lookahead.matches("\\*")) {
-//                    state = 50;
-//                    Current_Token.add(lookahead);
-//                    readChar();
-//                }
-//                else {
-//                    state = 50;
-//                    Current_Token.add(lookahead);
-//                    readChar();
-//                }
-//                break;
-//            case 51:
-//                if(lookahead.matches("\\*")) {
-//                    state = 51;
-//                    Current_Token.add(lookahead);
-//                    readChar();
-//                }
-//                else if(lookahead.matches("/")) {
-//                    state = 0;
-//                    // Current_Token.add(lookahead);
-//                    //  readChar();
-//                    Current_Token.clear();
-//                }
-//                else {
-//                    state = 50;
-//                    Current_Token.add(lookahead);
-//                    readChar();
-//                }
-		// end new
 		case 45:
 		case 52:
 		case 53:
@@ -612,7 +542,6 @@ public class Tokenizor {
 			} else {
 				state = 70;
 				Current_Token.add(lookahead);
-				readChar();
 			}
 			break;
 		case 70:
@@ -688,7 +617,62 @@ public class Tokenizor {
 			Print();
 			state = 0;
 			break;
-
+		case 46:
+			if(lookahead.matches("/")) {
+				state = 47;
+				readChar();
+			}else if(lookahead.matches("=")) {
+				state = 49;
+				Current_Token.add(lookahead);
+				readChar();
+			}else if(lookahead.matches("\\*")) {
+				state = 50;
+				readChar();
+				Current_Token.remove(Current_Token.size()-1);
+			}else {
+				state = 48;
+			}
+			break;
+		case 47:
+			if(lookahead.matches("\n")) {
+				state = 0;
+				Current_Token.remove(Current_Token.size()-1);
+				readChar();
+			}else {
+				state =47;
+				readChar();
+			}
+			break;
+		case 48:
+			UngetC();
+			Print();
+			state = 0;
+			break;
+		case 49:
+			Print();
+			state = 0;
+			break;
+		case 50:
+			if(lookahead.matches("\\*")) {
+				state =51;
+				readChar();
+			}else {
+				state = 50;
+				readChar();
+			}
+			break;
+		case 51:
+			if(lookahead.matches("\\*")) {
+				state =51;
+				readChar();
+			}else if(lookahead.matches("/")) {
+				state = 0;
+				readChar();
+			}else {
+				state = 50;
+				readChar();
+			}
+			break;
 		}
 	}
 
@@ -712,18 +696,12 @@ public class Tokenizor {
 		}
 
 		flag = RESERVED_WORDS.contains(GetName.toLowerCase());
-//        for (int i = 0; i < RESERVED_WORDS.size(); i++) {
-//            if(GetName.equals(RESERVED_WORDS.get(i))){
-//                System.out.println(GetName+"\t"+RESERVED_WORDS.get(i));
-//                flag=true;
-//                break;
-//            }
 
 		if (flag) {
-			System.out.println(GetName + "\t" + GetName.toUpperCase());
+			System.out.printf("\t%-30s\t%s%n", GetName, GetName.toUpperCase());
 			Current_Token.clear();
 		} else {
-			System.out.println(GetName + "\t" + "id");
+			System.out.printf("\t%-30s\t%s%n", GetName, "Identifier");
 			Current_Token.clear();
 		}
 	}
