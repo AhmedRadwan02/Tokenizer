@@ -499,7 +499,7 @@ public class Tokenizer {
 		case 55:
 		case 54:
 		case 75:
-	    	case 76:
+	   	case 76:
     		case 77:
 			Print();
 			state = 0;
