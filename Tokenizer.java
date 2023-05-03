@@ -73,6 +73,10 @@ public class Tokenizer {
 		TOKENS_NAMES.put(70, "Integer");
 		TOKENS_NAMES.put(72, "Float");
 		TOKENS_NAMES.put(74, "Dot");
+		TOKENS_NAMES.put(75, "colon");
+		TOKENS_NAMES.put(76, "At_sign");
+		TOKENS_NAMES.put(77, "Question_mark");
+
 	}
 
 	int state = 0;
@@ -191,6 +195,12 @@ public class Tokenizer {
 				state = 73;
 			} else if (lookahead.matches("[a-zA-Z_$]*")) {
 				state = 67;
+			}else if (lookahead.matches(":")) {
+					state = 75;
+			}else if (lookahead.matches("@")) {
+				state = 76;
+			}else if (lookahead.matches("\\?")) {
+				state = 77;
 			}else {
 			}
 			if (lookahead.matches("\\s")) {
@@ -488,6 +498,9 @@ public class Tokenizer {
 		case 56:
 		case 55:
 		case 54:
+		case 75:
+	    	case 76:
+    		case 77:
 			Print();
 			state = 0;
 			break;
