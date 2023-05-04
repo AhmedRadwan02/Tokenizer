@@ -6,7 +6,6 @@ import java.util.spi.CurrencyNameProvider;
 
 public class Tokenizer {
 	Scanner scanner;
-	// current character we want to match
 	String lookahead;
 	// Reserved words in java language
 	static ArrayList<String> RESERVED_WORDS = new ArrayList<String>(Arrays.asList("abstract", "assert", "boolean",
@@ -73,7 +72,7 @@ public class Tokenizer {
 		TOKENS_NAMES.put(70, "Integer");
 		TOKENS_NAMES.put(72, "Float");
 		TOKENS_NAMES.put(74, "Dot");
-		TOKENS_NAMES.put(75, "colon");
+		TOKENS_NAMES.put(75, "Colon");
 		TOKENS_NAMES.put(76, "At_sign");
 		TOKENS_NAMES.put(77, "Question_mark");
 
@@ -107,16 +106,18 @@ public class Tokenizer {
 			switches();
 		}
 	}
+
 	// header
 	public void printHeader() {
 		System.out.println("--------------------------------------------------------------");
-		System.out.printf("\t%-32s%s%n","Lexemes","Tokens");
+		System.out.printf("\t%-32s%s%n", "Lexemes", "Tokens");
 		System.out.println("--------------------------------------------------------------\n");
 
 	}
+
 	// Print
 	public void Print() {
-		StringBuilder tokens =new StringBuilder();
+		StringBuilder tokens = new StringBuilder();
 		if (!Current_Token.isEmpty() && state != 0) {
 			for (int i = 0; i < Current_Token.size(); i++) {
 				if (!Current_Token.get(i).matches("\r"))
@@ -195,13 +196,13 @@ public class Tokenizer {
 				state = 73;
 			} else if (lookahead.matches("[a-zA-Z_$]*")) {
 				state = 67;
-			}else if (lookahead.matches(":")) {
-					state = 75;
-			}else if (lookahead.matches("@")) {
+			} else if (lookahead.matches(":")) {
+				state = 75;
+			} else if (lookahead.matches("@")) {
 				state = 76;
-			}else if (lookahead.matches("\\?")) {
+			} else if (lookahead.matches("\\?")) {
 				state = 77;
-			}else {
+			} else {
 			}
 			if (lookahead.matches("\\s")) {
 				state = 0;
@@ -499,17 +500,24 @@ public class Tokenizer {
 		case 55:
 		case 54:
 		case 75:
-	   	case 76:
-    		case 77:
+		case 76:
+		case 77:
 			Print();
 			state = 0;
 			break;
 		case 64:
-			if (lookahead.matches("\"")) {
+			// 65 double quote
+			// 66 String
+			// 79 safe state for upcoming \
+			if (lookahead.matches("\\\\")) {
+				state = 79;
+				Current_Token.add(lookahead);
+				readChar();
+			} else if (lookahead.matches("\"")) {
 				state = 66;
 				Current_Token.add(lookahead);
 				readChar();
-			} else if (lookahead.matches("\n")) {
+			} else if (lookahead.matches("\n|\r")) {
 				state = 65;
 			} else {
 				state = 64;
@@ -517,7 +525,14 @@ public class Tokenizer {
 				readChar();
 			}
 			break;
+
+		case 79:
+			state = 64;
+			Current_Token.add(lookahead);
+			readChar();
+			break;
 		case 65:
+			System.out.println(lookahead);
 			UngetC();
 			Print();
 			state = 0;
@@ -600,6 +615,11 @@ public class Tokenizer {
 			state = 0;
 			break;
 		case 60:
+			if (lookahead.matches("\\\\")) {
+				state = 60;
+				Current_Token.add(lookahead);
+				readChar();
+			}
 			if (lookahead.matches("\n") || lookahead.matches("\r")) {
 				state = 62;
 			} else {
@@ -607,13 +627,11 @@ public class Tokenizer {
 				Current_Token.add(lookahead);
 				readChar();
 			}
+
 			break;
+
 		case 61:
-			if (lookahead.matches("[ntbfr\\\\]")) {
-				state = 61;
-				Current_Token.add(lookahead);
-				readChar();
-			} else if (lookahead.matches("'")) {
+			if (lookahead.matches("'")) {
 				state = 63;
 				Current_Token.add(lookahead);
 				readChar();
@@ -631,28 +649,28 @@ public class Tokenizer {
 			state = 0;
 			break;
 		case 46:
-			if(lookahead.matches("/")) {
+			if (lookahead.matches("/")) {
 				state = 47;
 				readChar();
-			}else if(lookahead.matches("=")) {
+			} else if (lookahead.matches("=")) {
 				state = 49;
 				Current_Token.add(lookahead);
 				readChar();
-			}else if(lookahead.matches("\\*")) {
+			} else if (lookahead.matches("\\*")) {
 				state = 50;
 				readChar();
-				Current_Token.remove(Current_Token.size()-1);
-			}else {
+				Current_Token.remove(Current_Token.size() - 1);
+			} else {
 				state = 48;
 			}
 			break;
 		case 47:
-			if(lookahead.matches("\n")) {
+			if (lookahead.matches("\n")) {
 				state = 0;
-				Current_Token.remove(Current_Token.size()-1);
+				Current_Token.remove(Current_Token.size() - 1);
 				readChar();
-			}else {
-				state =47;
+			} else {
+				state = 47;
 				readChar();
 			}
 			break;
@@ -666,22 +684,22 @@ public class Tokenizer {
 			state = 0;
 			break;
 		case 50:
-			if(lookahead.matches("\\*")) {
-				state =51;
+			if (lookahead.matches("\\*")) {
+				state = 51;
 				readChar();
-			}else {
+			} else {
 				state = 50;
 				readChar();
 			}
 			break;
 		case 51:
-			if(lookahead.matches("\\*")) {
-				state =51;
+			if (lookahead.matches("\\*")) {
+				state = 51;
 				readChar();
-			}else if(lookahead.matches("/")) {
+			} else if (lookahead.matches("/")) {
 				state = 0;
 				readChar();
-			}else {
+			} else {
 				state = 50;
 				readChar();
 			}
